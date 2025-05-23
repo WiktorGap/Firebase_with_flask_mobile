@@ -1,0 +1,20 @@
+{
+  "age": 30,
+  "middleName": "Mateusz",
+  "name": "Jan",
+  "surename": "Nowak",
+  "visit": {
+    "visit1": {
+      "description": "back pain",
+      "doctor": {
+        "doctor7": {
+          "middleName": "Tomasz",
+          "name": "Karol",
+          "surname": "Zieliński"
+        }
+      },
+      "prescription": "ketonal forte 2x dziennie",
+      "referral": "MRI scan"
+    }
+  }
+}

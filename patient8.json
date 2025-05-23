@@ -1,0 +1,32 @@
+{
+  "age": 45,
+  "middleName": "Janusz",
+  "name": "Adam",
+  "surname": "Nowak",
+  "visit": {
+    "visit1": {
+      "description": "chronic back pain",
+      "doctor": {
+        "doctor2": {
+          "middleName": "Jerzy",
+          "name": "Tomasz",
+          "surname": "Kręgarz"
+        }
+      },
+      "prescription": "rehabilitation twice a week",
+      "referral": "MRI of the spine"
+    },
+    "visit2": {
+      "description": "high blood pressure",
+      "doctor": {
+        "doctor5": {
+          "middleName": "Anna",
+          "name": "Katarzyna",
+          "surname": "Ciśnieniowa"
+        }
+      },
+      "prescription": "pressure meds daily",
+      "referral": "cardiologist consultation"
+    }
+  }
+}
