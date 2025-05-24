@@ -1,0 +1,32 @@
+{
+  "age": 29,
+  "middleName": "Piotr",
+  "name": "Jakub",
+  "surname": "Zieliński",
+  "visit": {
+    "visit1": {
+      "description": "migraine",
+      "doctor": {
+        "doctor3": {
+          "middleName": "Marek",
+          "name": "Dominik",
+          "surname": "Neurologiczny"
+        }
+      },
+      "prescription": "painkillers and rest",
+      "referral": "neurological tests"
+    },
+    "visit2": {
+      "description": "routine check-up",
+      "doctor": {
+        "doctor6": {
+          "middleName": "Ewa",
+          "name": "Magdalena",
+          "surname": "Rodzinna"
+        }
+      },
+      "prescription": "vitamin D supplements",
+      "referral": "blood tests"
+    }
+  }
+}
