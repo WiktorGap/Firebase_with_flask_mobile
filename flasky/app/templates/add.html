@@ -6,7 +6,14 @@
 </head>
 <body>
     <h2> Dodaj nowego pacjenta</h2>
-
+     <form action="/add" method="POST">
+        <label>Id pacjenta: <input type="text" name="patient_id" required></label><br>
+        <label>Imię: <input type="text" name="name" required></label><br>
+         <label>Drugie imię: <input type="text" name="middleName" required></label><br>
+        <label>Nazwisko: <input type="text" name="surname" required></label><br>
+        <label>Wiek: <input type="number" name="age" required></label><br>
+        <button type="submit">Wwpisz do bazy</button>
+    </form>
 
 </body>
 </html>

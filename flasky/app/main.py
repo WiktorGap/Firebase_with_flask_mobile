@@ -4,7 +4,7 @@ import json
 import os
 import pandas as pd
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 
 appRouting = Flask(__name__)
 
@@ -40,8 +40,22 @@ def retrive():
         print(pacjenci)
     return render_template('retrive.html', pacjenci= pacjenci)
 
-appRouting.route("/add", methods = ['POST'])
+@appRouting.route("/add", methods = ['POST', 'GET'])
 def add():
+    ref = db.reference("/Patient")
+    name = request.form.get("name")
+    surname = request.form.get("surname")
+    patient_id = request.form.get("patient_id")
+    age = request.form.get("age")
+    middleName = request.form.get("middleName")
+    ref = db.reference(f"/Patient/{patient_id}")
+    ref.set({
+        'name': name,
+        'middleName' : middleName,
+        'surname': surname,
+        'age' : age
+    })
+    return render_template("add.html")
 
 
 
