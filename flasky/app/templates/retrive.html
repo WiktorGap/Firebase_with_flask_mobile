@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+    </head>
+    <body>
+    <h2>Pobierz pacjentów</h2>
+    <form action="/retrive" method="GET">
+        <button type="submit">Pobierz pacjentów</button>
+    </form>
+
+    <ul>
+    {% for pacjent in pacjenci %}
+        <li>
+          ID: {{ pacjent.id }}<br>
+          Imię: {{ pacjent.name }}<br>
+          Nazwisko: {{ pacjent.surname }}<br>
+          Wiek: {{ pacjent.age }}
+        </li>
+
+    {% endfor %}
+    </ul>
+    </body>
+</html>
