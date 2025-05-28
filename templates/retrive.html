@@ -4,9 +4,29 @@
 
     </head>
     <body>
-        <p2>Retrive smth</p2>
-        {% block script %}
-        
-        {% endblock %}
+    <h2>Pobierz pacjentów</h2>
+    <form action="/retrive" method="GET">
+        <button type="submit">Pobierz pacjentów</button>
+    </form>
+
+    <ul>
+    {% for pacjent in pacjenci %}
+        <li>
+          ID: {{ pacjent.id }}<br>
+          Imię: {{ pacjent.name }}<br>
+          Nazwisko: {{ pacjent.surname }}<br>
+          Wiek: {{ pacjent.age }}<br>
+          Wizyta :
+            {% for key, value in pacjent.visit.items() %}
+                        {{key}} <br> {% for rodzaj, wartosc in value.items() %}
+                                    {{rodzaj}} : {{wartosc}} <br>
+                        {% endfor %}
+                    {% endfor %}
+
+
+        </li>
+
+    {% endfor %}
+    </ul>
     </body>
 </html>

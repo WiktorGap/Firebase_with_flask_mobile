@@ -22,10 +22,10 @@ ref = db.reference("/Patient")
 @appRouting.route('/')
 def menu():
      return render_template("menu.html")
-@appRouting.route('/retrive')
-def retrive():
-     patientsData = retFromDb()
-     return render_template("retrive.html",records=patientsData)
+# @appRouting.route('/retrive')
+# def retrive():
+#      patientsData = retFromDb()
+#      return render_template("retrive.html",records=patientsData)
 
 
 @appRouting.route('/update', methods=["GET", "POST"])
@@ -182,14 +182,14 @@ def updatePatientInDb(
 
     keyField = aviableFieldsToUpdate[dataField]
 
-    if keyField != "visit":  # Aktualizacja pola pacjenta
+    if keyField != "visit":  
         if newDataForFieldPatient is None:
             print("Błąd: brak danych dla pola pacjenta.")
             return
         ref.child(patient).update({keyField: newDataForFieldPatient})
         print(f"Updated {keyField} to {newDataForFieldPatient} for {patient}")
     else:
-        # Aktualizacja pola wizyty lub lekarza
+        
         vistationTreeKey = patientData[keyField]
         listOfFieldsOfVistation = list(vistationTreeKey.keys())
 
@@ -207,14 +207,14 @@ def updatePatientInDb(
 
         visitKey = vistationDataFieldsList[visKeyField]
 
-        if visitKey != "doctor":  # Aktualizacja pola wizyty
+        if visitKey != "doctor":  
             if newDataForFieldVisit is None:
                 print("Błąd: brak danych dla pola wizyty.")
                 return
             ref.child(patient).child("visit").child(vistation).update({visitKey: newDataForFieldVisit})
             print(f"Updated {visitKey} to {newDataForFieldVisit} for {patient}")
         else:
-            # Aktualizacja pola lekarza
+            
             doctorData = visitData[visitKey]
             doctorKeys = list(doctorData.keys())
 
@@ -240,88 +240,10 @@ def updatePatientInDb(
             print(f"Updated doctor field {keyToUpdate} to {newDataForDoctorField} for {patient}")
 
 
-# def deletePatientInDb(keyIDX,fieldIDX,visKeyIdx,visitDataFieldIdx,selectedDoctorIdx,selectedDoctorIdxKey):
-  
-#     patientsData = ref.get()
-
-#     if patient in patientsData:
-#         patientData = patientsData[patient]
-#     else:
-#         print("Patient not found")
-#         return
-    
-
-#     print("You are going to delete one single field")
-
-#     listOfKeys = list(patientsData.keys())
-#     print(listOfKeys)
-#     keyIdx = keyIDX
-#     patient = listOfKeys[keyIdx]
-    
-#     if patient in patientsData.keys():
-#             patientData = patientsData[patient]
-    
-#     aviableFieldsToUpdate = list(patientData.keys())
-#     print(aviableFieldsToUpdate)
-    
-
-#     fieldIdx = fieldIDX
-#     keyField = aviableFieldsToUpdate[fieldIdx]
-
-#     if keyField != aviableFieldsToUpdate[-1]:
-#         if keyField in patientData.keys():
-
-#             ref.child(patient).child(keyField).delete()
-#             print(f"Deleted {keyField} for {patient}")
-#         else:
-#             print("Deleting 'visit' field is not handled yet.")
-#     else:
-#         vistationTreeKey = patientData[keyField]
-#         listOfFieldsOfVistation = list(vistationTreeKey.keys())
-#         print(listOfFieldsOfVistation)
-#         vistationIdxKey = visKeyIdx
-#         vistation= listOfFieldsOfVistation[vistationIdxKey]
-#         visitData = vistationTreeKey[vistation]
-
-#         print(visitData)
-#         vistationDataFieldsList = list(visitData.keys())
-#         print(f"Choose field to upadye\n: {vistationDataFieldsList}")
-    
-#         visitationDataFieldIdx = visitDataFieldIdx
-#         visitKey = vistationDataFieldsList[visitationDataFieldIdx]  
-        
-#         if  visitKey != "doctor":
-#             if  visitKey in vistationDataFieldsList:
-#                     ref.child(patient).child("visit").child(vistation).child(visitKey).delete()
-#                     print(f"Deleted {visitKey } for {patient}")
-#             else:
-#                     print("Updating 'visit' field is not handled yet.")
-#         else:
-#             doctorData = visitData[visitKey]
-#             selectedDoctor= list(doctorData.keys())
-#             print(selectedDoctor)
-#             selectDoctorIdx = selectedDoctorIdx
-#             keyForSelected = selectedDoctor[selectDoctorIdx]
-#             selectedDoctorData = doctorData[keyForSelected]
-#             print(selectedDoctorData)
-
-#             selectedDoctorDataKeys = list(selectedDoctorData.keys())
-#             selectDoctorIdxKeys = selectedDoctorIdxKey
-            
-#             keyToUpadate = selectedDoctorDataKeys[selectDoctorIdxKeys] 
-
-#             print("Choose field to upadte")
-            
-
-#             if keyToUpadate in selectedDoctorDataKeys:
-                    
-#                     #ref.child(patient).child("visit").child(vistation).child("doctor").child(keyToUpadate).update({visitKey: userInputForDoctor})
-#                     ref.child(patient).child("visit").child(vistation).child("doctor").child(keyForSelected).child(keyToUpadate).delete()
-
 def deletePatientInDb(keyIDX, fieldIDX, visKeyIdx, visitDataFieldIdx, selectedDoctorIdx, selectedDoctorIdxKey):
     patientsData = ref.get()
 
-    # keyIDX to nazwa pacjenta, np. 'Patient4'
+
     patient = keyIDX
 
     if patient not in patientsData:
@@ -398,7 +320,6 @@ def delete():
             else:
                 message = "Nie ma takiego pacjenta"
         else:
-            # POBIERANIE WSZYSTKICH WYMAGANYCH PARAMETRÓW
             try:
                 keyIDX = request.form.get("patient_id")
                 fieldIDX = int(request.form.get("dataField")) - 1 if request.form.get("dataField") else None
@@ -420,6 +341,57 @@ def delete():
                 message = f"Wystąpił błąd: {e}"
 
     return render_template("delete.html", message=message)
+
+
+
+@appRouting.route('/retrive', methods = [ 'GET'])
+def retrive():
+    pacjenci = []
+    if request.method == 'GET':
+        ref = db.reference('/Patient')
+        dane = ref.get()
+        print(dane)
+
+        if dane:
+            for patient_id, patient_data in dane.items():
+                pacjenci.append({
+                    'id': patient_id,
+                    'name': patient_data.get('name'),
+                    'surname': patient_data.get('surname'),
+                    'age': patient_data.get('age'),
+                    'visit' : patient_data.get('visit')
+                })
+    return render_template('retrive.html', pacjenci = pacjenci)
+
+@appRouting.route("/add", methods = ['POST', 'GET'])
+def add():
+    name = request.form.get("name")
+    surname = request.form.get("surname")
+    patient_id = request.form.get("patient_id")
+    age = request.form.get("age")
+    middleName = request.form.get("middleName")
+    visitNumber = request.form.get("visitNumber")
+    description = request.form.get("description")
+    doctor = request.form.get("doctor")
+    prescription = request.form.get("prescription")
+    refferal = request.form.get("refferal")
+    visit = {
+        visitNumber : {
+        "description": description,
+        "doctor": doctor,
+        "prescription": prescription,
+        "refferal": refferal
+        }
+    }
+    ref = db.reference(f"/Patient/{patient_id}")
+    ref.set({
+        'name': name,
+        'middleName' : middleName,
+        'surname': surname,
+        'age' : age,
+        'visit' : visit
+    })
+    return render_template("add.html")
 
 
 
