@@ -4,7 +4,7 @@ import json
 import os 
 import pandas as pd
 
-from flask import Flask , render_template , request
+from flask import Flask , render_template
 
 appRouting = Flask(__name__)
 
@@ -18,7 +18,6 @@ app = firebase_admin.initialize_app(cred,{
 ref = db.reference("/Patient")
 
 
-
 @appRouting.route('/')
 def menu():
      return render_template("menu.html")
@@ -26,39 +25,6 @@ def menu():
 def retrive():
      patientsData = retFromDb()
      return render_template("retrive.html",records=patientsData)
-
-
-@appRouting.route('/update', methods=["GET", "POST"])
-def updt():
-    if request.method == "POST":
-        idxForPatient = int(request.form.get("idxForPatinet")) - 1
-        dataField = int(request.form.get("dataField")) - 1 if request.form.get("dataField") else None
-        visKey = int(request.form.get("visKey")) - 1 if request.form.get("visKey") else None
-        visKeyField = int(request.form.get("visKeyField")) - 1 if request.form.get("visKeyField") else None
-        doctorField = int(request.form.get("doctorField")) - 1 if request.form.get("doctorField") else None
-        selectedDoctorIdx = int(request.form.get("selectedDoctorIdx")) - 1 if request.form.get("selectedDoctorIdx") else None
-
-        newDataForFieldPatient = request.form.get("newDataForFieldPatient")
-        newDataForFieldVisit = request.form.get("newDataForFieldVisit")
-        newDataForDoctorField = request.form.get("newDataForDoctorField")
-
-        updatePatientInDb(
-            idxForPatient,
-            dataField,
-            visKey,
-            visKeyField,
-            doctorField,
-            newDataForFieldPatient,
-            newDataForFieldVisit,
-            newDataForDoctorField,
-            selectedDoctorIdx
-        )
-        return "Zaktualizowano dane"
-
-    return render_template("update.html")
-
-
-
 
 def writeDataOfPatientToDB():
     PatientKey = input("Enter patientKey")
@@ -154,91 +120,76 @@ def retFromDb():
      return patientsData
      
 
-def updatePatientInDb(
-    idxForPatinet,
-    dataField=None,
-    visKey=None,
-    visKeyField=None,
-    doctorField=None,
-    newDataForFieldPatient=None,
-    newDataForFieldVisit=None,
-    newDataForDoctorField=None,
-    selectedDoctorIdx=None
-):
+def updatePatientInDb():
+  
     patientsData = ref.get()
+
     listOfKeys = list(patientsData.keys())
-    patient = listOfKeys[idxForPatinet]
-
-    if patient not in patientsData:
-        print(f"Błąd: pacjent o indeksie {idxForPatinet} nie istnieje.")
-        return
-
-    patientData = patientsData[patient]
+    print(listOfKeys)
+    keyIdx = int(input("Type num of patient you want to chocie (in order occurance)")) - 1
+    patient = listOfKeys[keyIdx]
+    
+    if patient in patientsData.keys():
+            patientData = patientsData[patient]
+    
     aviableFieldsToUpdate = list(patientData.keys())
+    print(aviableFieldsToUpdate)
+    
+    while(True):
+        fieldIdx = int(input("Type num of field you want to update (in order occurance)")) - 1
+        keyField = aviableFieldsToUpdate[fieldIdx]
 
-    if dataField is None or dataField >= len(aviableFieldsToUpdate):
-        print("Błąd: dataField poza zakresem.")
-        return
-
-    keyField = aviableFieldsToUpdate[dataField]
-
-    if keyField != "visit":  # Aktualizacja pola pacjenta
-        if newDataForFieldPatient is None:
-            print("Błąd: brak danych dla pola pacjenta.")
-            return
-        ref.child(patient).update({keyField: newDataForFieldPatient})
-        print(f"Updated {keyField} to {newDataForFieldPatient} for {patient}")
-    else:
-        # Aktualizacja pola wizyty lub lekarza
-        vistationTreeKey = patientData[keyField]
-        listOfFieldsOfVistation = list(vistationTreeKey.keys())
-
-        if visKey is None or visKey >= len(listOfFieldsOfVistation):
-            print("Błąd: visKey poza zakresem.")
-            return
-
-        vistation = listOfFieldsOfVistation[visKey]
-        visitData = vistationTreeKey[vistation]
-        vistationDataFieldsList = list(visitData.keys())
-
-        if visKeyField is None or visKeyField >= len(vistationDataFieldsList):
-            print("Błąd: visKeyField poza zakresem.")
-            return
-
-        visitKey = vistationDataFieldsList[visKeyField]
-
-        if visitKey != "doctor":  # Aktualizacja pola wizyty
-            if newDataForFieldVisit is None:
-                print("Błąd: brak danych dla pola wizyty.")
-                return
-            ref.child(patient).child("visit").child(vistation).update({visitKey: newDataForFieldVisit})
-            print(f"Updated {visitKey} to {newDataForFieldVisit} for {patient}")
+        if keyField != aviableFieldsToUpdate[-1]:
+             if keyField in patientData.keys():
+                userInput = input(f"Enter data to upade for field {keyField} ")
+                #patientData[keyField] = userInput
+                ref.child(patient).update({keyField: userInput})
+                print(f"Updated {keyField} to {userInput} for {patient}")
+             else:
+                print("Updating 'visit' field is not handled yet.")
         else:
-            # Aktualizacja pola lekarza
-            doctorData = visitData[visitKey]
-            doctorKeys = list(doctorData.keys())
+            vistationTreeKey = patientData[keyField]
+            listOfFieldsOfVistation = list(vistationTreeKey.keys())
+            print(listOfFieldsOfVistation)
+            vistationIdxKey = int(input("Type num of field you want to update (in order occurance)")) - 1
+            vistation= listOfFieldsOfVistation[vistationIdxKey]
+            visitData = vistationTreeKey[vistation]
 
-            if selectedDoctorIdx is None or selectedDoctorIdx >= len(doctorKeys):
-                print("Błąd: selectedDoctorIdx poza zakresem.")
-                return
+            print(visitData)
+            vistationDataFieldsList = list(visitData.keys())
+            print(f"Choose field to upadye\n: {vistationDataFieldsList}")
+           
+            visitationDataFieldIdx = int(input("Type num of field you want to update (in order occurance)")) - 1
+            visitKey = vistationDataFieldsList[visitationDataFieldIdx]  
+            
+            if  visitKey != "doctor":
+                if  visitKey in vistationDataFieldsList:
+                        userInputVis = input(f"Enter data to upade for field  ")
+                        ref.child(patient).child("visit").child(vistation).update({visitKey: userInputVis})
+                        print(f"Updated {visitKey } to {userInputVis} for {patient}")
+                else:
+                        print("Updating 'visit' field is not handled yet.")
+            else:
+                 doctorData = visitData[visitKey]
+                 selectedDoctor= list(doctorData.keys())
+                 print(selectedDoctor)
+                 selectDoctorIdx = int(input("Type num of field you want to update (in order occurance)")) - 1
+                 keyForSelected = selectedDoctor[selectDoctorIdx]
+                 selectedDoctorData = doctorData[keyForSelected]
+                 print(selectedDoctorData)
 
-            selectedDoctor = doctorKeys[selectedDoctorIdx]
-            selectedDoctorData = doctorData[selectedDoctor]
-            doctorFieldsList = list(selectedDoctorData.keys())
+                 selectedDoctorDataKeys = list(selectedDoctorData.keys())
+                 selectDoctorIdxKeys = int(input("Type num of field you want to update (in order occurance)")) - 1
 
-            if doctorField is None or doctorField >= len(doctorFieldsList):
-                print("Błąd: doctorField poza zakresem.")
-                return
+                 keyToUpadate = selectedDoctorDataKeys[selectDoctorIdxKeys] 
 
-            keyToUpdate = doctorFieldsList[doctorField]
+                 print("Choose field to upadte")
+                
 
-            if newDataForDoctorField is None:
-                print("Błąd: brak danych dla pola lekarza.")
-                return
-
-            ref.child(patient).child("visit").child(vistation).child("doctor").child(selectedDoctor).update({keyToUpdate: newDataForDoctorField})
-            print(f"Updated doctor field {keyToUpdate} to {newDataForDoctorField} for {patient}")
-
+                 if keyToUpadate in selectedDoctorDataKeys:
+                        userInputForDoctor = input(f"Enter data to upade for field  ")
+                        #ref.child(patient).child("visit").child(vistation).child("doctor").child(keyToUpadate).update({visitKey: userInputForDoctor})
+                        ref.child(patient).child("visit").child(vistation).child("doctor").child(keyForSelected).update({keyToUpadate: userInputForDoctor})
 
 def deletePatientInDb():
   
