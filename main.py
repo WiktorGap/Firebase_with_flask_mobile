@@ -4,7 +4,7 @@ import json
 import os 
 import pandas as pd
 
-from flask import Flask , render_template , request
+from flask import Flask , render_template , request , redirect , url_for
 
 appRouting = Flask(__name__)
 
@@ -240,86 +240,187 @@ def updatePatientInDb(
             print(f"Updated doctor field {keyToUpdate} to {newDataForDoctorField} for {patient}")
 
 
-def deletePatientInDb():
+# def deletePatientInDb(keyIDX,fieldIDX,visKeyIdx,visitDataFieldIdx,selectedDoctorIdx,selectedDoctorIdxKey):
   
+#     patientsData = ref.get()
+
+#     if patient in patientsData:
+#         patientData = patientsData[patient]
+#     else:
+#         print("Patient not found")
+#         return
+    
+
+#     print("You are going to delete one single field")
+
+#     listOfKeys = list(patientsData.keys())
+#     print(listOfKeys)
+#     keyIdx = keyIDX
+#     patient = listOfKeys[keyIdx]
+    
+#     if patient in patientsData.keys():
+#             patientData = patientsData[patient]
+    
+#     aviableFieldsToUpdate = list(patientData.keys())
+#     print(aviableFieldsToUpdate)
+    
+
+#     fieldIdx = fieldIDX
+#     keyField = aviableFieldsToUpdate[fieldIdx]
+
+#     if keyField != aviableFieldsToUpdate[-1]:
+#         if keyField in patientData.keys():
+
+#             ref.child(patient).child(keyField).delete()
+#             print(f"Deleted {keyField} for {patient}")
+#         else:
+#             print("Deleting 'visit' field is not handled yet.")
+#     else:
+#         vistationTreeKey = patientData[keyField]
+#         listOfFieldsOfVistation = list(vistationTreeKey.keys())
+#         print(listOfFieldsOfVistation)
+#         vistationIdxKey = visKeyIdx
+#         vistation= listOfFieldsOfVistation[vistationIdxKey]
+#         visitData = vistationTreeKey[vistation]
+
+#         print(visitData)
+#         vistationDataFieldsList = list(visitData.keys())
+#         print(f"Choose field to upadye\n: {vistationDataFieldsList}")
+    
+#         visitationDataFieldIdx = visitDataFieldIdx
+#         visitKey = vistationDataFieldsList[visitationDataFieldIdx]  
+        
+#         if  visitKey != "doctor":
+#             if  visitKey in vistationDataFieldsList:
+#                     ref.child(patient).child("visit").child(vistation).child(visitKey).delete()
+#                     print(f"Deleted {visitKey } for {patient}")
+#             else:
+#                     print("Updating 'visit' field is not handled yet.")
+#         else:
+#             doctorData = visitData[visitKey]
+#             selectedDoctor= list(doctorData.keys())
+#             print(selectedDoctor)
+#             selectDoctorIdx = selectedDoctorIdx
+#             keyForSelected = selectedDoctor[selectDoctorIdx]
+#             selectedDoctorData = doctorData[keyForSelected]
+#             print(selectedDoctorData)
+
+#             selectedDoctorDataKeys = list(selectedDoctorData.keys())
+#             selectDoctorIdxKeys = selectedDoctorIdxKey
+            
+#             keyToUpadate = selectedDoctorDataKeys[selectDoctorIdxKeys] 
+
+#             print("Choose field to upadte")
+            
+
+#             if keyToUpadate in selectedDoctorDataKeys:
+                    
+#                     #ref.child(patient).child("visit").child(vistation).child("doctor").child(keyToUpadate).update({visitKey: userInputForDoctor})
+#                     ref.child(patient).child("visit").child(vistation).child("doctor").child(keyForSelected).child(keyToUpadate).delete()
+
+def deletePatientInDb(keyIDX, fieldIDX, visKeyIdx, visitDataFieldIdx, selectedDoctorIdx, selectedDoctorIdxKey):
     patientsData = ref.get()
 
-    
-    choice = input("Do you want to remove patient from db? y/n").lower().strip()
-    if choice == "y":
-        listOfKeys = list(patientsData.keys())
-        print(listOfKeys)
-        keyIdx = int(input("Type num of patient you want to dekete (in order occurance)")) - 1
-        patient = listOfKeys[keyIdx]
-        ref.child(patient).set({})
-        print(f"Patient {patient} deleted from db")
+    # keyIDX to nazwa pacjenta, np. 'Patient4'
+    patient = keyIDX
+
+    if patient not in patientsData:
+        print("Patient not found")
+        return
+
+    patientData = patientsData[patient]
+    aviableFieldsToUpdate = list(patientData.keys())
+    print(aviableFieldsToUpdate)
+
+    fieldIDX = int(fieldIDX)
+    keyField = aviableFieldsToUpdate[fieldIDX]
+
+    if keyField != aviableFieldsToUpdate[-1]:
+        if keyField in patientData:
+            ref.child(patient).child(keyField).delete()
+            print(f"Deleted {keyField} for {patient}")
+        else:
+            print("Deleting 'visit' field is not handled yet.")
     else:
-        print("You are going to delete one single field")
+        vistationTreeKey = patientData[keyField]
+        listOfFieldsOfVistation = list(vistationTreeKey.keys())
+        print(listOfFieldsOfVistation)
+        visKeyIdx = int(visKeyIdx)
+        vistation = listOfFieldsOfVistation[visKeyIdx]
+        visitData = vistationTreeKey[vistation]
 
-        listOfKeys = list(patientsData.keys())
-        print(listOfKeys)
-        keyIdx = int(input("Type num of patient you want to dekete (in order occurance)")) - 1
-        patient = listOfKeys[keyIdx]
-        
-        if patient in patientsData.keys():
-                patientData = patientsData[patient]
-        
-        aviableFieldsToUpdate = list(patientData.keys())
-        print(aviableFieldsToUpdate)
-        
-        while(True):
-            fieldIdx = int(input("Type num of field you want to delete (in order occurance)")) - 1
-            keyField = aviableFieldsToUpdate[fieldIdx]
+        print(visitData)
+        vistationDataFieldsList = list(visitData.keys())
+        print(f"Choose field to update\n: {vistationDataFieldsList}")
 
-            if keyField != aviableFieldsToUpdate[-1]:
-                if keyField in patientData.keys():
+        visitDataFieldIdx = int(visitDataFieldIdx)
+        visitKey = vistationDataFieldsList[visitDataFieldIdx]
 
-                    ref.child(patient).child(keyField).delete()
-                    print(f"Deleted {keyField} for {patient}")
-                else:
-                    print("Deleting 'visit' field is not handled yet.")
+        if visitKey != "doctor":
+            if visitKey in vistationDataFieldsList:
+                ref.child(patient).child("visit").child(vistation).child(visitKey).delete()
+                print(f"Deleted {visitKey} for {patient}")
             else:
-                vistationTreeKey = patientData[keyField]
-                listOfFieldsOfVistation = list(vistationTreeKey.keys())
-                print(listOfFieldsOfVistation)
-                vistationIdxKey = int(input("Type num of field you want to update (in order occurance)")) - 1
-                vistation= listOfFieldsOfVistation[vistationIdxKey]
-                visitData = vistationTreeKey[vistation]
+                print("Updating 'visit' field is not handled yet.")
+        else:
+            doctorData = visitData[visitKey]
+            selectedDoctor = list(doctorData.keys())
+            print(selectedDoctor)
+            selectedDoctorIdx = int(selectedDoctorIdx)
+            keyForSelected = selectedDoctor[selectedDoctorIdx]
+            selectedDoctorData = doctorData[keyForSelected]
+            print(selectedDoctorData)
 
-                print(visitData)
-                vistationDataFieldsList = list(visitData.keys())
-                print(f"Choose field to upadye\n: {vistationDataFieldsList}")
-            
-                visitationDataFieldIdx = int(input("Type num of field you want to update (in order occurance)")) - 1
-                visitKey = vistationDataFieldsList[visitationDataFieldIdx]  
-                
-                if  visitKey != "doctor":
-                    if  visitKey in vistationDataFieldsList:
-                            ref.child(patient).child("visit").child(vistation).child(visitKey).delete()
-                            print(f"Deleted {visitKey } for {patient}")
-                    else:
-                            print("Updating 'visit' field is not handled yet.")
-                else:
-                    doctorData = visitData[visitKey]
-                    selectedDoctor= list(doctorData.keys())
-                    print(selectedDoctor)
-                    selectDoctorIdx = int(input("Type num of field you want to delete (in order occurance)")) - 1
-                    keyForSelected = selectedDoctor[selectDoctorIdx]
-                    selectedDoctorData = doctorData[keyForSelected]
-                    print(selectedDoctorData)
+            selectedDoctorIdxKey = int(selectedDoctorIdxKey)
+            selectedDoctorDataKeys = list(selectedDoctorData.keys())
+            keyToUpdate = selectedDoctorDataKeys[selectedDoctorIdxKey]
 
-                    selectedDoctorDataKeys = list(selectedDoctorData.keys())
-                    selectDoctorIdxKeys = int(input("Type num of field you want to delete (in order occurance)")) - 1
-                    
-                    keyToUpadate = selectedDoctorDataKeys[selectDoctorIdxKeys] 
+            print("Choose field to update")
 
-                    print("Choose field to upadte")
-                    
+            if keyToUpdate in selectedDoctorDataKeys:
+                ref.child(patient).child("visit").child(vistation).child("doctor").child(keyForSelected).child(keyToUpdate).delete()
 
-                    if keyToUpadate in selectedDoctorDataKeys:
-                            
-                            #ref.child(patient).child("visit").child(vistation).child("doctor").child(keyToUpadate).update({visitKey: userInputForDoctor})
-                            ref.child(patient).child("visit").child(vistation).child("doctor").child(keyForSelected).child(keyToUpadate).delete()
+
+
+
+@appRouting.route("/delete", methods=['GET', 'POST'])
+def delete():
+    message = ""
+    if request.method == 'POST':
+        flag = request.form.get("flag", "").lower().strip()
+        patientID = request.form.get("patient_id")
+        ref = db.reference(f"/Patient/{patientID}")
+
+        if flag == "tak":
+            if ref.get():
+                ref.delete()
+                message = "Usunięto pacjenta"
+            else:
+                message = "Nie ma takiego pacjenta"
+        else:
+            # POBIERANIE WSZYSTKICH WYMAGANYCH PARAMETRÓW
+            try:
+                keyIDX = request.form.get("patient_id")
+                fieldIDX = int(request.form.get("dataField")) - 1 if request.form.get("dataField") else None
+                visKeyIdx = int(request.form.get("visKey")) - 1 if request.form.get("visKey") else None
+                visitDataFieldIdx = int(request.form.get("visKeyField")) - 1 if request.form.get("visKeyField") else None
+                selectedDoctorIdx = int(request.form.get("selectedDoctorIdx")) - 1 if request.form.get("selectedDoctorIdx") else None
+                selectedDoctorIdxKey = int(request.form.get("doctorField")) - 1 if request.form.get("doctorField")  else None
+
+                deletePatientInDb(
+                    keyIDX,
+                    fieldIDX,
+                    visKeyIdx,
+                    visitDataFieldIdx,
+                    selectedDoctorIdx,
+                    selectedDoctorIdxKey
+                )
+                message = "Usunięto wskazane dane"
+            except Exception as e:
+                message = f"Wystąpił błąd: {e}"
+
+    return render_template("delete.html", message=message)
+
 
 
 

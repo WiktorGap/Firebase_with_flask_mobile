@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuń pacjenta</title>
+</head>
+<body>
+    <h2>Usuń pacjenta</h2>
+    <form action="/delete" method="POST">
+        <p>Czy chcesz usunąć całego pacjenta?</p>
+        <input type="text" name="flag"><br>
+
+        <label>Id pacjenta: <input type="text" name="patient_id" required></label><br><br>
+
+        <p>Główne pole do usunięcia (np. 1 = name, 2 = middleName, 3 = age, 4 = surname, 5 = visit):</p>
+        <input type="number" name="dataField" required><br><br>
+
+        <p>Numer wizyty (jeśli usuwasz „visit”, np. 1):</p>
+        <input type="number" name="visKey"><br><br>
+
+        <p>Numer pola wizyty (np. 1 = date, 2 = time, 3 = doctor):</p>
+        <input type="number" name="visKeyField"><br><br>
+
+        <p>Numer lekarza (jeśli jest ich kilku, np. 1):</p>
+        <input type="number" name="selectedDoctorIdx"><br><br>
+
+        <p>Numer pola lekarza (np. 1 = name, 2 = surname):</p>
+        <input type="number" name="doctorField"><br><br>
+
+        <button type="submit">Usuń z bazy</button><br><br>
+    </form>
+
+    {% if message %}
+        <p style="color: blue">{{ message }}</p>
+    {% endif %}
+</body>
+</html>
