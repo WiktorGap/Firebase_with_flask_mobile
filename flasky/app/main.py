@@ -34,30 +34,56 @@ def retrive():
                 pacjenci.append({
                     'id': patient_id,
                     'name': patient_data.get('name'),
-                    'surname': patient_data.get('surname') or patient_data.get('surename'),
-                    'age': patient_data.get('age')
+                    'surname': patient_data.get('surname'),
+                    'age': patient_data.get('age'),
+                    'visit' : patient_data.get('visit')
                 })
-        print(pacjenci)
-    return render_template('retrive.html', pacjenci= pacjenci)
+    return render_template('retrive.html', pacjenci = pacjenci)
 
 @appRouting.route("/add", methods = ['POST', 'GET'])
 def add():
-    ref = db.reference("/Patient")
     name = request.form.get("name")
     surname = request.form.get("surname")
     patient_id = request.form.get("patient_id")
     age = request.form.get("age")
     middleName = request.form.get("middleName")
+    visitNumber = request.form.get("visitNumber")
+    description = request.form.get("description")
+    doctor = request.form.get("doctor")
+    prescription = request.form.get("prescription")
+    refferal = request.form.get("refferal")
+    visit = {
+        visitNumber : {
+        "description": description,
+        "doctor": doctor,
+        "prescription": prescription,
+        "refferal": refferal
+        }
+    }
     ref = db.reference(f"/Patient/{patient_id}")
     ref.set({
         'name': name,
         'middleName' : middleName,
         'surname': surname,
-        'age' : age
+        'age' : age,
+        'visit' : visit
     })
     return render_template("add.html")
-
-
+@appRouting.route("/delete", methods = ['GET', 'POST'])
+def delete():
+    patientID = request.form.get("patient_id")
+    ref = db.reference(f"/Patient/{patientID}")
+    message = ""
+    if request.method == 'POST':
+        if ref.get():
+            ref.delete()
+            message = "usunięto pacjenta"
+            redirect(url_for('delete'))
+        else:
+            message = "Nie ma takiego pacjenta"
+            redirect(url_for('delete'))
+    redirect(url_for('delete'))
+    return render_template("delete.html", message = message)
 
 if __name__ == "__main__":
     appRouting.run(debug=True)

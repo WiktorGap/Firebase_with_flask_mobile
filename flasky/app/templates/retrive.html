@@ -15,7 +15,15 @@
           ID: {{ pacjent.id }}<br>
           Imię: {{ pacjent.name }}<br>
           Nazwisko: {{ pacjent.surname }}<br>
-          Wiek: {{ pacjent.age }}
+          Wiek: {{ pacjent.age }}<br>
+          Wizyta :
+            {% for key, value in pacjent.visit.items() %}
+                        {{key}} <br> {% for rodzaj, wartosc in value.items() %}
+                                    {{rodzaj}} : {{wartosc}} <br>
+                        {% endfor %}
+                    {% endfor %}
+
+
         </li>
 
     {% endfor %}
