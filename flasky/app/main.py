@@ -87,3 +87,4 @@ def delete():
 
 if __name__ == "__main__":
     appRouting.run(debug=True)
+    print('k')
