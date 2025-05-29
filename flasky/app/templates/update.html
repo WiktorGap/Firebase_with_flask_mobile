@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Aktualizacja pacjenta</title>
+</head>
+<body>
+    <h1>Aktualizuj dane pacjenta</h1>
+    <form method="POST">
+        <p>ID pacjenta (np. 1):</p>
+        <input type="number" name="idxForPatinet" required><br><br>
+
+        <p>Główne pole do aktualizacji (np. 1 = name, 2 = middleName, 3 = age, 4 = surename, 5 = visit):</p>
+        <input type="number" name="dataField" required><br><br>
+        <p>Wpisz nowe dane dla Pacjenta </p>
+        <input type="text" name="newDataForFieldPatient"><br><br>
+
+        <p>Numer wizyty (jeśli edytujesz "visit", np. 1):</p>
+        <input type="number" name="visKey"><br><br>
+        
+
+        <p>Numer pola wizyty (np. 1 = opis, 2 = czas , 3 = recepta):</p>
+        <input type="number" name="visKeyField"><br><br>
+        <p>Wpisz nowe dane dla Wizyty </p><br>
+        <input type="text" name="newDataForFieldVisit"><br>
+
+        <p>Numer lekarza (jeśli jest ich kilku, np. 1):</p>
+        <input type="number" name="selectedDoctorIdx"><br><br>
+
+        <p>Numer pola lekarza (np. 1 = name, 2 = surname):</p>
+        
+        <input type="number" name="doctorField"><br><br>
+
+        <input type="text" name="newDataForDoctorField" ><br><br>
+
+        <input type="submit" value="Aktualizuj">
+    </form>
+</body>
+</html>

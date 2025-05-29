@@ -18,10 +18,20 @@
           Wiek: {{ pacjent.age }}<br>
           Wizyta :
             {% for key, value in pacjent.visit.items() %}
-                        {{key}} <br> {% for rodzaj, wartosc in value.items() %}
-                                    {{rodzaj}} : {{wartosc}} <br>
+                        {{key}} <br>
+                        {% for rodzaj, wartosc in value.items() %}
+                            {% if rodzaj == "doctor" %}
+                                {% for info, details in wartosc.items() %}
+                                    {{info}} : <br>
+                                            {% for detail, dane in details.items() %}
+                                                {{detail}} : {{dane}} <br>
+                                            {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                {{rodzaj}} : {{wartosc}} <br>
+                            {% endif %}
                         {% endfor %}
-                    {% endfor %}
+            {% endfor %}
 
 
         </li>
