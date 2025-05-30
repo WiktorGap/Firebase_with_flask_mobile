@@ -8,7 +8,7 @@ from flask import Flask, render_template, request, redirect, url_for
 
 appRouting = Flask(__name__)
 
-cred = credentials.Certificate("C:\\Users\\admin\\Desktop\\myKey.json")
+cred = credentials.Certificate("C:\\Users\\wikto\\Desktop\\myKey.json")
 app = firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://patientsdb-18075-default-rtdb.europe-west1.firebasedatabase.app/'
 })
@@ -364,12 +364,24 @@ def add():
     visitNumber = request.form.get("visitNumber")
     description = request.form.get("description")
     doctor = request.form.get("doctor")
+    nameDoctor = request.form.get("nameDoctor")
+    surnameDoctor = request.form.get("surnameDoctor")
     prescription = request.form.get("prescription")
     refferal = request.form.get("refferal")
+
+    doctorDict = {}
+    doctorDict
+    {
+        doctor:{
+        "surname":nameDoctor,
+        "surname":surnameDoctor,
+        }
+
+    }
     visit = {
         visitNumber: {
             "description": description,
-            "doctor": doctor,
+            "doctor": doctorDict,
             "prescription": prescription,
             "refferal": refferal
         }
